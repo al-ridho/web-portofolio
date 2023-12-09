@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id'])) {
-	$qry = $conn->query("SELECT * from project where id = '{$_GET['id']}' ");
+	$qry = $conn->query("SELECT * from trends where id = '{$_GET['id']}' ");
 	foreach ($qry->fetch_array() as $k => $v) {
 		if (!is_numeric($k)) {
 			$$k = $v;
@@ -24,10 +24,10 @@ if (isset($_GET['id'])) {
 <div class="col-lg-12">
 	<div class="card card-outline card-primary">
 		<div class="card-header">
-			<h5 class="card-title">Project</h5>
+			<h5 class="card-title">Trends</h5>
 		</div>
 		<div class="card-body">
-			<form id="project">
+			<form id="trends">
 				<div class="row" class="details">
 					<input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
 					<div class="col-sm-6">
@@ -72,8 +72,8 @@ if (isset($_GET['id'])) {
 			</form>
 		</div>
 		<div class="card-footer">
-			<button class="btn btn-primary btn-sm" form="project"><?php echo isset($_GET['id']) ? "Update" : "Save" ?></button>
-			<a class="btn btn-primary btn-sm" href="./?page=project">Cancel</a>
+			<button class="btn btn-primary btn-sm" form="trends"><?php echo isset($_GET['id']) ? "Update" : "Save" ?></button>
+			<a class="btn btn-primary btn-sm" href="./?page=trends">Cancel</a>
 		</div>
 	</div>
 </div>
@@ -91,11 +91,11 @@ if (isset($_GET['id'])) {
 	}
 	$(document).ready(function() {
 		$('.select')
-		$('#project').submit(function(e) {
+		$('#trends').submit(function(e) {
 			e.preventDefault();
 			start_loader();
 			$.ajax({
-				url: _base_url_ + "classes/Content.php?f=project",
+				url: _base_url_ + "classes/Content.php?f=trends",
 				data: new FormData($(this)[0]),
 				cache: false,
 				contentType: false,
@@ -110,7 +110,7 @@ if (isset($_GET['id'])) {
 					if (resp != undefined) {
 						resp = JSON.parse(resp)
 						if (resp.status == 'success') {
-							location.href = _base_url_ + "admin/?page=project";
+							location.href = _base_url_ + "admin/?page=trends";
 						} else {
 							alert_toast("An error occured", 'error')
 							console.log(resp);
