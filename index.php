@@ -1,4 +1,35 @@
-<?php require_once('config.php'); ?>
+<?php require_once('config.php');
+
+
+if (isset($_POST['btnSimpan'])) {
+
+   // var_dump($_POST);
+   $nama = $_POST["nama"];
+   $komen = $_POST["komen"];
+
+   $simpan = mysqli_query($conn, "INSERT INTO komen (nama, komen) 
+                        VALUES ('$nama','$komen')");
+
+   if ($simpan) {
+      echo "
+         <script>
+            alert('Tersimpan');
+            location.replace('index.php');
+         </script>
+      ";
+   } else {
+      echo "
+         <script>
+            alert('Gagal Tersimpan');
+            location.replace('index.php');
+         </script>
+      ";
+   }
+}
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en" class="" style="height: auto;">
 <?php require('inc/header.php') ?>
@@ -7,19 +38,60 @@
 
    <!-- Header
    ================================================== -->
+   <?php
+   $u_qry = $conn->query("SELECT * FROM users where id = 1");
+   foreach ($u_qry->fetch_array() as $k => $v) {
+      if (!is_numeric($k)) {
+         $user[$k] = $v;
+      }
+   }
+   $c_qry = $conn->query("SELECT * FROM contacts");
+   while ($row = $c_qry->fetch_assoc()) {
+      $contact[$row['meta_field']] = $row['meta_value'];
+   }
+   // var_dump($contact['facebook']);
+   ?>
    <header id="home">
-
+      <div class="header-carousel">
+         <div class="slide active">
+            <img src="profile_asset/images/header-background.jpg" alt="Slide 1">
+            <div class="slide-text">
+               <h1>
+                  <?php echo isset($user) ? ucwords($user['firstname'] . ' ' . $user['lastname']) : ""; ?>.
+               </h1>
+               <h3>
+                  <?php echo stripslashes($_settings->info('welcome_message')) ?>
+               </h3>
+            </div>
+         </div>
+         <div class="slide">
+            <img src="profile_asset/images/portfolio/coffee.jpg" alt="Slide 2">
+            <div class="slide-text">
+               <h1>
+                  <?php echo isset($user) ? ucwords($user['firstname'] . ' ' . $user['lastname']) : ""; ?>.
+               </h1>
+               <h3>
+                  <?php echo stripslashes($_settings->info('welcome_message')) ?>
+               </h3>
+            </div>
+         </div>
+         <div class="slide">
+            <img src="profile_asset/images/portfolio/farmerboy.jpg" alt="Slide 3">
+            <div class="slide-text">
+               <h1>
+                  <?php echo isset($user) ? ucwords($user['firstname'] . ' ' . $user['lastname']) : ""; ?>.
+               </h1>
+               <h3>
+                  <?php echo stripslashes($_settings->info('welcome_message')) ?>
+               </h3>
+            </div>
+         </div>
+      </div>
 
 
       <nav id="nav-wrap">
-
-
-
          <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Show navigation</a>
          <a class="mobile-btn" href="#" title="Hide navigation">Hide navigation</a>
-
-
-
          <ul id="nav" class="nav">
             <li class="current"><a class="smoothscroll" href="#home">Home</a></li>
             <li><a class="smoothscroll" href="#trend">Trend</a></li>
@@ -28,52 +100,19 @@
             <li><a class="smoothscroll" href="#portfolio">Works</a></li>
             <li><a class="smoothscroll" href="#testimonials">Testimonials</a></li>
          </ul> <!-- end #nav -->
-
-
       </nav> <!-- end #nav-wrap -->
-
-
-
-      <?php
-      $u_qry = $conn->query("SELECT * FROM users where id = 1");
-      foreach ($u_qry->fetch_array() as $k => $v) {
-         if (!is_numeric($k)) {
-            $user[$k] = $v;
-         }
-      }
-      $c_qry = $conn->query("SELECT * FROM contacts");
-      while ($row = $c_qry->fetch_assoc()) {
-         $contact[$row['meta_field']] = $row['meta_value'];
-      }
-      // var_dump($contact['facebook']);
-      ?>
-      <div class="row banner">
-         <div class="banner-text">
-            <h1 class="responsive-headline">
-               <?php echo isset($user) ? ucwords($user['firstname'] . ' ' . $user['lastname']) : ""; ?>.
-            </h1>
-            <h3>
-               <?php echo stripslashes($_settings->info('welcome_message')) ?>
-
-            </h3>
-         </div>
-      </div>
-
       <p class="scrolldown">
          <a class="smoothscroll" href="#about"><i class="icon-down-circle"></i></a>
       </p>
-
-
-
    </header>
    <!-- Header End -->
 
    <!-- Trend -->
-
    <section id="trend">
       <div class="row">
          <div>
             <div class="twelve columns collapsed">
+               <br>
                <h1>Trend Videos</h1><br>
                <style>
                   #trend * {
@@ -83,9 +122,9 @@
             </div>
          </div>
          <!-- trend-wrapper -->
-         <div id="trend-wrapper" class="bgrid-quarters s-bgrid-thirds cf">
+         <div id="portofolio-wrapper" class="bgrid-quarters s-bgrid-thirds cf">
             <?php
-            $p_qry = $conn->query("SELECT * FROM project ");
+            $p_qry = $conn->query("SELECT * FROM trends ");
             while ($row = $p_qry->fetch_assoc()) :
             ?>
                <div class="columns portfolio-item">
@@ -106,22 +145,22 @@
                         ?>
 
                         <div class="overlay">
-                           <div class="portfolio-item-meta">
-                              <h5 class="truncate-1">
+                           <div class="trends-item-meta">
+                              <h3 class="truncate-1">
                                  <?php echo $row['name'] ?>
-                              </h5>
+                              </h3>
                            </div>
                         </div>
                         <div class="link-icon"><i class="icon-plus"></i></div>
                      </a>
-                  </div>
+                  </div><br>
                </div> <!-- item end -->
             <?php endwhile; ?>
          </div>
          <!-- trend-wrapper end -->
 
          <?php
-         $p_qry = $conn->query("SELECT * FROM project ");
+         $p_qry = $conn->query("SELECT * FROM trends ");
          while ($row = $p_qry->fetch_assoc()) :
          ?>
             <!-- Modal Popup -->
@@ -179,18 +218,11 @@
    <!-- About Section
    ================================================== -->
    <section id="about">
-
       <div class="row">
-
          <div class="three columns">
-
             <img class="profile-pic" src="dist/img/logoAF.jpg" alt="" />
-
-
          </div>
-
          <div class="nine columns main-col">
-
             <h2>About Us</h2>
             <style>
                #about_me * {
@@ -198,13 +230,9 @@
                }
             </style>
 
-
             <div id="about_me">
                <?php include "about.php"; ?>
             </div>
-
-
-
             <div class="row">
                <?php
                // Mengambil video dengan ID 4 dari database
@@ -256,28 +284,21 @@
                         <?php echo $contact['email'] ?>
                      </span>
                   </p>
-
                </div>
-
                <div class="columns download">
                   <p>
                      <!-- <a href="#" class="button"><i class="fa fa-download"></i>Download Resume</a> -->
                   </p>
                </div>
-
             </div> <!-- end row -->
-
          </div> <!-- end .main-col -->
-
       </div>
-
    </section> <!-- About Section End-->
 
 
    <!-- Resume Section
    ================================================== -->
    <section id="resume">
-
       <!-- Education
       ----------------------------------------------- -->
       <div class="row education">
@@ -318,24 +339,19 @@
 
       </div> <!-- End Education -->
 
-
       <!-- Work
       ----------------------------------------------- -->
       <div class="row work">
-
          <div class="three columns header-col">
             <h1><span>Work</span></h1>
          </div>
-
          <div class="nine columns main-col">
             <?php
             $w_qry = $conn->query("SELECT * FROM work ");
             while ($row = $w_qry->fetch_assoc()) :
             ?>
                <div class="row item">
-
                   <div class="twelve columns">
-
                      <h3>
                         <?php echo $row['company'] ?>
                      </h3>
@@ -345,19 +361,16 @@
                            <?php echo str_replace("_", " ", $row['ended']) ?>
                         </em>
                      </p>
-
-
                      <p>
                         <?php echo stripslashes(html_entity_decode($row['description'])) ?>
                      </p>
-
                   </div>
-
                </div> <!-- item end -->
             <?php endwhile; ?>
          </div> <!-- main-col end -->
 
-      </div> <!-- End Work -->
+      </div>
+      <!-- End Work -->
 
 
       <!-- Skills
@@ -399,11 +412,9 @@
       <!-- Portfolio Section
    ================================================== -->
       <section id="portfolio">
-
          <div class="row">
             <div class="twelve columns collapsed">
                <h1>Check Out Some of Our Works.</h1>
-
                <!-- portfolio-wrapper -->
                <div id="portfolio-wrapper" class="bgrid-quarters s-bgrid-thirds cf">
                   <?php
@@ -440,7 +451,6 @@
                      </div> <!-- item end -->
                   <?php endwhile; ?>
                </div> <!-- portfolio-wrapper end -->
-
             </div> <!-- twelve columns end -->
 
             <?php
@@ -474,95 +484,92 @@
                         <?php echo $row['client'] ?>
                      </span>
                   </div>
-
                   <div class="link-box">
                      <!-- <a href="http://srikrishnacommunication.com/Giridesigns.html" target="_blank">Details</a> -->
                      <a class="popup-modal-dismiss">Close</a>
                   </div>
                </div><!-- modal-01 End -->
             <?php endwhile; ?>
-
          </div>
          <!-- row End -->
-
       </section>
       <!-- Portfolio Section End-->
-
-
-
 
       <!-- Testimonials Section
    ================================================== -->
       <section id="testimonials">
-
          <div class="text-container">
-
             <div class="row">
-
                <div class="two columns header-col">
-
                   <h1><span>Client Testimonials</span></h1>
-
                </div>
-
                <div class="ten columns flex-container">
-
                   <div class="flexslider">
-
                      <ul class="slides">
-
-                        <li>
-                           <blockquote>
-                              <p>Hasilnya sangat estetis dan detailnya sangat diperhatikan. Saya benar-benar puas
-                                 dengan perhatian terhadap kualitas.
-                              </p>
-                              <cite>Mikevisuals</cite>
-                           </blockquote>
-                        </li> <!-- slide ends -->
-
-                        <li>
-                           <blockquote>
-                              <p>Pilihan orang yang tepat untuk proyek ini! Kreativitas dan inovasinya benar-benar
-                                 membuat hasilnya berbeda dan menonjol.
-                              </p>
-                              <cite>Nadhif</cite>
-                           </blockquote>
-                        </li> <!-- slide ends -->
-
-                        <li>
-                           <blockquote>
-                              <p>Kemampuan orang ini untuk mengatasi tantangan dan memberikan solusi yang efektif
-                                 patut diacungi jempol. Hasilnya melebihi harapan saya.
-                              </p>
-                              <cite>Isaac Langit</cite>
-                           </blockquote>
-                        </li> <!-- slide ends -->
-
-                        <li>
-                           <blockquote>
-                              <p>Terima kasih banyak atas dedikasinya. Hasilnya tidak hanya memenuhi kebutuhan kami,
-                                 tetapi juga mencerminkan profesionalisme tinggi.
-                              </p>
-                              <cite>Olive Jezriel</cite>
-                           </blockquote>
-                        </li> <!-- slide ends -->
-
+                        <?php
+                        $Komenqry = $conn->query("SELECT * FROM komen ");
+                        while ($row = $Komenqry->fetch_assoc()) :
+                        ?>
+                           <li>
+                              <blockquote>
+                                 <p><?php echo ($row['komen']) ?></p>
+                                 <h1><cite><?php echo ($row['nama']) ?></cite></h1>
+                              </blockquote>
+                           </li>
+                        <?php endwhile ?>
                      </ul>
-
-                  </div> <!-- div.flexslider ends -->
-
-               </div> <!-- div.flex-container ends -->
-
+                  </div>
+               </div>
             </div> <!-- row ends -->
-
          </div> <!-- text-container ends -->
+      </section>
+      <!-- Testimonials Section End-->
 
-      </section> <!-- Testimonials Section End-->
+      <div class="row comment">
+         <div class="three columns header-col">
+            <h1><span>Comment</span></h1>
+         </div>
+         <div class="nine columns main-col">
+            <div class="row">
+               <div class="">
+                  <form action="" method="POST">
+                     <label for="nama">Nama:</label>
+                     <input type="text" id="nama" name="nama" class="form-control" placeholder="Ketikkan Nama..." autocomplete="off">
+                     <label for="komen">Comment:</label>
+                     <!-- <input type="" id="komen" name="komen"> -->
+                     <textarea class="form-control bg-gray" name="komen" id="komen" placeholder="ketikkan komentar..." style="width: 400px"></textarea>
+                     <button class="btn btn-primary" name="btnSimpan" id="btnSimpan">Simpan</button>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
 
-
+      <section id="google-map">
+         <!-- How to change your own map point
+            1. Go to Google Maps
+            2. Click on your location point
+            3. Click "Share" and choose "Embed map" tab
+            4. Copy only URL and paste it within the src="" field below-->
+         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3982.0835657407665!2d98.69237217572548!3d3.5682438504319327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30313059bc5c1dcd%3A0x4711e61bc0acbfcc!2sUniversitas%20Harapan%20Medan!5e0!3m2!1sid!2sid!4v1702211557343!5m2!1sid!2sid" width="100%" height="500" frameborder="0" style="border:0" allowfullscreen="" loading="lazy"></iframe>
+      </section>
 
       <!-- /.content-wrapper -->
       <?php require_once('inc/footer.php') ?>
+
 </body>
+
+<script>
+   const slides = document.querySelectorAll('.slide');
+   let currentSlide = 0;
+
+   function nextSlide() {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+   }
+
+   setInterval(nextSlide, 5000); // Ubah gambar setiap 5 detik, sesuaikan jika diperlukan
+</script>
 
 </html>
